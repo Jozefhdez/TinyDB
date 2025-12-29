@@ -56,6 +56,11 @@ void close_input_buffer(InputBuffer *input_buffer) {
 MetaCommandResult do_meta_command(InputBuffer *input_buffer) {
     if (strcmp(input_buffer->buffer, ".exit") == 0) {
         exit(EXIT_SUCCESS);
+    } else if (strcmp(input_buffer->buffer, ".help") == 0) {
+        printf("Commands:\n");
+        printf("  .exit   - Exit the program\n");
+        printf("  .help   - Show this help message lmao\n");
+        return META_COMMAND_SUCCESS;
     } else {
         return META_COMMAND_UNRECOGNIZED_COMMAND;
     }
