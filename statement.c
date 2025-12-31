@@ -7,6 +7,7 @@ PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement) {
     statement->type = STATEMENT_INSERT;
 
     char *keyword = strtok(input_buffer->buffer, " ");
+    (void)keyword; // stfu compiler
     char *id_string = strtok(NULL, " ");
     char *username = strtok(NULL, " ");
     char *email = strtok(NULL, " ");
@@ -56,7 +57,8 @@ static ExecuteResult execute_insert(Statement *statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
-static ExecuteResult execute_select(Statement *statement, Table *table) {
+static ExecuteResult
+execute_select(__attribute__((unused)) Statement *statement, Table *table) {
     Row row;
     for (uint32_t i = 0; i < table->num_rows; i++) {
         deserialize_row(row_slot(table, i), &row);
