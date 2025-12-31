@@ -34,3 +34,5 @@ __pycache__/
 *.sqlite3
 
 build/
+
+tinydb.db
