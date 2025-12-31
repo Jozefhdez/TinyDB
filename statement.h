@@ -1,13 +1,15 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
+#include "input.h"
 #include "row.h"
 #include "table.h"
-#include "input.h"
 #include <stdbool.h>
 
 typedef enum {
     PREPARE_SUCCESS,
+    PREPARE_NEGATIVE_ID,
+    PREPARE_STRING_TOO_LONG,
     PREPARE_UNRECOGNIZED_STATEMENT,
     PREPARE_SYNTAX_ERROR
 } PrepareResult;
@@ -24,5 +26,6 @@ typedef struct {
 PrepareResult prepare_statement(InputBuffer *input_buffer,
                                 Statement *statement);
 ExecuteResult execute_statement(Statement *statement, Table *table);
+PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement);
 
 #endif
