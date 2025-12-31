@@ -19,3 +19,16 @@ core.*
 *.temp
 
 *.log
+
+__pycache__/
+*.py[cod]
+
+.pytest_cache/
+
+*.swp
+*.swo
+.DS_Store
+*.log
+
+*.db
+*.sqlite3
