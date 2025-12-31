@@ -52,6 +52,9 @@ int main() {
         case EXECUTE_TABLE_FULL:
             printf("Error: Table full.\n");
             break;
+        case EXECUTE_FAILURE:
+            printf("Error: execute_statement function defaulted to "
+                   "EXECUTE_FAILURE\n");
         }
     }
 }

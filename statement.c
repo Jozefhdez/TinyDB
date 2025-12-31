@@ -69,9 +69,11 @@ execute_select(__attribute__((unused)) Statement *statement, Table *table) {
 
 ExecuteResult execute_statement(Statement *statement, Table *table) {
     switch (statement->type) {
-    case STATEMENT_INSERT:
+    case (STATEMENT_INSERT):
         return execute_insert(statement, table);
-    case STATEMENT_SELECT:
+    case (STATEMENT_SELECT):
         return execute_select(statement, table);
+    default:
+        return EXECUTE_FAILURE;
     }
 }
