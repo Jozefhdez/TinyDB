@@ -1,37 +1,27 @@
 # TinyDB
 
-A small, SQLite-inspired database implemented from scratch in C.
+TinyDB is a small, SQLite-inspired database implemented from scratch in C.
 
-Status: This project is still in development, expect rough edges and
-incomplete features.
+**Status:**
+This project is under development. Expect rough edges and incomplete features.
 
-**Purpose:**
-- Learn and demonstrate how a simple SQL-like engine and storage can be
-	implemented in C. The codebase is intended for study, experimentation,
-	and incremental improvement.
+## Purpose
+- To learn and demonstrate how a simple SQL-like engine and storage can be implemented in C.
+- The codebase is intended for study, experimentation, and incremental improvement.
 
-**Quick Features**
-- Small command-line interface that accepts simple statements such as
-	`insert`, `select`, and the meta-command `.exit`.
-- Basic input parsing, storage, and constraints (string length limits,
-	positive integer IDs) as exercised by the bundled tests.
+## Features
+- Command-line interface that accepts simple statements such as `insert`, `select`, and the meta-command `.exit`.
+- Basic input parsing, storage, and constraints (string length limits, positive integer IDs).
 
-**Build (recommended)**
-From the repository root run:
-
-```sh
-make build/main
-```
-
-If you prefer to compile directly with `gcc` (ensure the `build/` folder
-exists):
+## Build
+You need a C compiler (e.g., gcc or clang). From this folder, run:
 
 ```sh
 mkdir -p build
-gcc -std=c11 -Wall -Wextra -g -o build/main src/TinyDB/*.c
+gcc -std=c11 -Wall -Wextra -g -o build/main main.c input.c row.c table.c statement.c
 ```
 
-**Run**
+## Run
 
 ```sh
 ./build/main
@@ -39,17 +29,15 @@ gcc -std=c11 -Wall -Wextra -g -o build/main src/TinyDB/*.c
 
 Then enter commands interactively, for example:
 
-```sh
+```
 insert 1 user1 person1@example.com
 select
 .exit
 ```
 
-**Tests**
-The repository includes a small CLI test harness. Build the binary first,
-then run the tests with `pytest`:
+## Tests
+There is a small CLI test harness using pytest. Build the binary first, then run:
 
 ```sh
-make build/main
-pytest src/TinyDB/tests/test_cli.py
+pytest tests/test_cli.py
 ```
