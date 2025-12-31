@@ -17,8 +17,14 @@ This project is under development. Expect rough edges and incomplete features.
 You need a C compiler (e.g., gcc or clang). From this folder, run:
 
 ```sh
+make
+```
+
+Or manually:
+
+```sh
 mkdir -p build
-gcc -std=c11 -Wall -Wextra -g -o build/main main.c input.c row.c table.c statement.c
+gcc -std=c11 -Wall -Wextra -g -Iinclude -o build/main main.c input.c row.c table.c statement.c
 ```
 
 ## Run

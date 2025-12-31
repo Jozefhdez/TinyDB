@@ -1,6 +1,6 @@
-#include "input.h"
-#include "statement.h"
-#include "table.h"
+#include "include/input.h"
+#include "include/statement.h"
+#include "include/table.h"
 #include <stdbool.h>
 #include <stdio.h>
 
