@@ -35,7 +35,6 @@ void close_input_buffer(InputBuffer *input_buffer) {
 }
 
 void table_information(Table *table) {
-    uint32_t ROWS_PER_PAGE = get_rows_per_page();
     uint32_t total_pages =
         (table->num_rows + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
     off_t current_file_length =

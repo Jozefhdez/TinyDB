@@ -1,4 +1,5 @@
 #include "include/row.h"
+#include "include/table.h"
 #include <stdio.h>
 #include <string.h>
 
