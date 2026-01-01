@@ -29,7 +29,7 @@ Table *db_open(const char *filename) {
 
 void db_close(Table *table) {
     Pager *pager = table->pager;
-    u_int32_t ROWS_PER_PAGE = get_rows_per_page();
+    uint32_t ROWS_PER_PAGE = get_rows_per_page();
     uint32_t num_full_pages = table->num_rows / ROWS_PER_PAGE;
 
     for (uint32_t i = 0; i < num_full_pages; i++) {

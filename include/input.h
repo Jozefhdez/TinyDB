@@ -18,6 +18,7 @@ typedef enum {
 InputBuffer *new_input_buffer();
 void read_input(InputBuffer *input_buffer);
 void close_input_buffer(InputBuffer *input_buffer);
+void table_information(Table *table);
 MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table);
 
 #endif
