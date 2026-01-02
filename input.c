@@ -45,21 +45,49 @@ void table_information(Table *table) {
     printf("Note: Recent inserts are in memory; file size updates on exit.\n");
 }
 
+void table_schema(Table *table) {
+    (void)table; // suppress unused parameter warning
+    printf("\nSchema:\n");
+    printf("  id: uint32_t (%d bytes)\n", (int)sizeof(uint32_t));
+    printf("  username: char[%d] (%d bytes)\n", COLUMN_USERNAME_SIZE,
+           COLUMN_USERNAME_SIZE + 1);
+    printf("  email: char[%d] (%d bytes)\n\n", COLUMN_EMAIL_SIZE,
+           COLUMN_EMAIL_SIZE + 1);
+}
+
+MetaCommandType get_meta_command_type(const char *buffer) {
+    if (strcmp(buffer, ".exit") == 0)
+        return COMMAND_EXIT;
+    if (strcmp(buffer, ".tables") == 0)
+        return COMMAND_TABLES;
+    if (strcmp(buffer, ".schema") == 0)
+        return COMMAND_SCHEMA;
+    if (strcmp(buffer, ".help") == 0)
+        return COMMAND_HELP;
+    return COMMAND_UNKNOWN;
+}
+
 MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
-    if (strcmp(input_buffer->buffer, ".exit") == 0) {
+    MetaCommandType command = get_meta_command_type(input_buffer->buffer);
+    switch (command) {
+    case COMMAND_EXIT:
         db_close(table);
         exit(EXIT_SUCCESS);
-    }
-    if (strcmp(input_buffer->buffer, ".tables") == 0) {
+    case COMMAND_TABLES:
         table_information(table);
-        return (META_COMMAND_SUCCESS);
-    } else if (strcmp(input_buffer->buffer, ".help") == 0) {
+        return META_COMMAND_SUCCESS;
+    case COMMAND_SCHEMA:
+        table_schema(table);
+        return META_COMMAND_SCHEMA;
+    case COMMAND_HELP:
         printf("Commands:\n");
         printf("  .tables - Show basic table information\n");
+        printf("  .schema - Show table schema\n");
         printf("  .exit   - Exit the program\n");
         printf("  .help   - Show this help message lmao\n");
         return META_COMMAND_SUCCESS;
-    } else {
+    case COMMAND_UNKNOWN:
+    default:
         return META_COMMAND_UNRECOGNIZED_COMMAND;
     }
 }
