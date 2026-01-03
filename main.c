@@ -1,3 +1,4 @@
+#include "include/btree.h"
 #include "include/input.h"
 #include "include/statement.h"
 #include "include/table.h"
@@ -17,6 +18,8 @@ int main(int argc, char *argv[]) {
 
     char *filename = argv[1];
     Table *table = db_open(filename);
+
+    btree_init_constants();
 
     InputBuffer *input_buffer = new_input_buffer();
 

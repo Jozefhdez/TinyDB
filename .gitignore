@@ -36,3 +36,4 @@ __pycache__/
 build/
 
 tinydb.db
+test.db

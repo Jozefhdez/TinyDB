@@ -21,6 +21,8 @@ typedef enum {
     COMMAND_TABLES,
     COMMAND_SCHEMA,
     COMMAND_HELP,
+    COMMAND_CONSTANTS,
+    COMMAND_BTREE,
     COMMAND_UNKNOWN
 } MetaCommandType;
 
@@ -30,5 +32,6 @@ void close_input_buffer(InputBuffer *input_buffer);
 void table_information(Table *table);
 void table_schema(Table *table);
 MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table);
+void print_constants();
 
 #endif

@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 #include "include/input.h"
+#include "include/btree.h"
 #include "include/table.h"
 #include <inttypes.h>
 #include <stdint.h>
@@ -55,6 +56,15 @@ void table_schema(Table *table) {
            COLUMN_EMAIL_SIZE + 1);
 }
 
+void print_constants() {
+    printf("ROW_SIZE: %d\n", ROW_SIZE);
+    printf("COMMON_NODE_HEADER_SIZE: %d\n", COMMON_NODE_HEADER_SIZE);
+    printf("LEAF_NODE_HEADER_SIZE: %d\n", LEAF_NODE_HEADER_SIZE);
+    printf("LEAF_NODE_CELL_SIZE: %d\n", LEAF_NODE_CELL_SIZE);
+    printf("LEAF_NODE_SPACE_FOR_CELLS: %d\n", LEAF_NODE_SPACE_FOR_CELLS);
+    printf("LEAF_NODE_MAX_CELLS: %d\n", LEAF_NODE_MAX_CELLS);
+}
+
 MetaCommandType get_meta_command_type(const char *buffer) {
     if (strcmp(buffer, ".exit") == 0)
         return COMMAND_EXIT;
@@ -62,6 +72,10 @@ MetaCommandType get_meta_command_type(const char *buffer) {
         return COMMAND_TABLES;
     if (strcmp(buffer, ".schema") == 0)
         return COMMAND_SCHEMA;
+    if (strcmp(buffer, ".constants") == 0)
+        return COMMAND_CONSTANTS;
+    if (strcmp(buffer, ".btree") == 0)
+        return COMMAND_BTREE;
     if (strcmp(buffer, ".help") == 0)
         return COMMAND_HELP;
     return COMMAND_UNKNOWN;
@@ -79,12 +93,22 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
     case COMMAND_SCHEMA:
         table_schema(table);
         return META_COMMAND_SCHEMA;
+    case COMMAND_CONSTANTS:
+        printf("Constants:\n");
+        print_constants();
+        return META_COMMAND_SUCCESS;
+    case COMMAND_BTREE:
+        printf("Tree:\n");
+        print_leaf_node(get_page(table->pager, 0));
+        return META_COMMAND_SUCCESS;
     case COMMAND_HELP:
         printf("Commands:\n");
-        printf("  .tables - Show basic table information\n");
-        printf("  .schema - Show table schema\n");
-        printf("  .exit   - Exit the program\n");
-        printf("  .help   - Show this help message lmao\n");
+        printf("  .tables.   - Show basic table information\n");
+        printf("  .schema    - Show table schema\n");
+        printf("  .constants - Show btree constants\n");
+        printf("  .btree     - printins the structure of btree\n");
+        printf("  .exit      - Exit the program\n");
+        printf("  .help      - Show this help message lmao\n");
         return META_COMMAND_SUCCESS;
     case COMMAND_UNKNOWN:
     default:
