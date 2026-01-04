@@ -109,9 +109,28 @@ def test_prints_one_node_btree():
         "TinyDB > Executed.",
         "TinyDB > Tree:",
         "leaf (size 3)",
-        "  - 0 : 2",
-        "  - 1 : 1",
+        "  - 0 : 1",
+        "  - 1 : 2",
         "  - 2 : 3",
+        "TinyDB > "
+    ]
+    
+    assert result == expected
+
+def test_prints_error_message_for_duplicate_id():
+    commands = [
+        "insert 1 user1 person1@example.com",
+        "insert 1 user1 person1@example.com",
+        "select",
+        ".exit"
+    ]
+    result = run_script(commands)
+    
+    expected = [
+        "TinyDB > Executed.",
+        "TinyDB > Error: Duplicate key.",
+        "TinyDB > (1, user1, person1@example.com)",
+        "Executed.",
         "TinyDB > "
     ]
     

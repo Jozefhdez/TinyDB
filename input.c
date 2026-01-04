@@ -46,8 +46,7 @@ void table_information(Table *table) {
     printf("Note: Recent inserts are in memory; file size updates on exit.\n");
 }
 
-void table_schema(Table *table) {
-    (void)table; // suppress unused parameter warning
+void table_schema() {
     printf("\nSchema:\n");
     printf("  id: uint32_t (%d bytes)\n", (int)sizeof(uint32_t));
     printf("  username: char[%d] (%d bytes)\n", COLUMN_USERNAME_SIZE,

@@ -30,7 +30,7 @@ InputBuffer *new_input_buffer();
 void read_input(InputBuffer *input_buffer);
 void close_input_buffer(InputBuffer *input_buffer);
 void table_information(Table *table);
-void table_schema(Table *table);
+void table_schema();
 MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table);
 void print_constants();
 
