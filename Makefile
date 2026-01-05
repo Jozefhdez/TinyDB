@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -g -Iinclude
 TARGET = build/main
-SRCS = main.c input.c row.c table.c statement.c btree.c
+SRCS = main.c input.c row.c table.c statement.c btree.c cursor.c pager.c
 OBJS = $(addprefix build/, $(SRCS:.c=.o))
 
 .PHONY: all clean
