@@ -67,6 +67,7 @@ static ExecuteResult execute_insert(Statement *statement, Table *table) {
     }
 
     leaf_node_insert(cursor, key_to_insert, row_to_insert);
+    table->num_rows++;
 
     free(cursor);
     return EXECUTE_SUCCESS;

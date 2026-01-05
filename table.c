@@ -4,10 +4,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-uint32_t get_table_max_rows() {
-    return ROWS_PER_PAGE * TABLE_MAX_PAGES;
-}
-
 Table *db_open(const char *filename) {
     Pager *pager = pager_open(filename);
 
@@ -31,7 +27,7 @@ void db_close(Table *table) {
         if (pager->pages[i] == NULL) {
             continue;
         }
-        pager_flush(pager, i);
+        pager_flush(pager, i); // write to disk
         free(pager->pages[i]);
         pager->pages[i] = NULL;
     }
@@ -40,14 +36,6 @@ void db_close(Table *table) {
     if (result == -1) {
         printf("Error closing db file.\n");
         exit(EXIT_FAILURE);
-    }
-
-    for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
-        void *page = pager->pages[i];
-        if (page) {
-            free(page);
-            pager->pages[i] = NULL;
-        }
     }
 
     free(pager);

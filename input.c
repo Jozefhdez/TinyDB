@@ -102,7 +102,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
         return META_COMMAND_SUCCESS;
     case COMMAND_HELP:
         printf("Commands:\n");
-        printf("  .tables.   - Show basic table information\n");
+        printf("  .tables    - Show basic table information\n");
         printf("  .schema    - Show table schema\n");
         printf("  .constants - Show btree constants\n");
         printf("  .btree     - printins the structure of btree\n");

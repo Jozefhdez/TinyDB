@@ -55,6 +55,7 @@ void *get_page(Pager *pager, uint32_t page_num) {
             num_pages += 1;
         }
 
+        // load page from disk
         if (page_num <= num_pages) {
             // byte offset in the file (where page starts)
             lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
