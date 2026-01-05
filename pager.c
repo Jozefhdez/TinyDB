@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+const uint32_t PAGE_SIZE = 4096; // 4 kilobytes
+
 Pager *pager_open(const char *filename) {
     int fd = open(filename,
                   O_RDWR |      // read write

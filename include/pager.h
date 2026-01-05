@@ -5,8 +5,6 @@
 
 #define TABLE_MAX_PAGES 100
 
-extern const uint32_t PAGE_SIZE;
-
 typedef struct {
     int file_descriptor;
     uint32_t file_length;

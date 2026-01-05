@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-const uint32_t PAGE_SIZE = 4096; // 4 kilobytes
-
 uint32_t get_table_max_rows() {
     return ROWS_PER_PAGE * TABLE_MAX_PAGES;
 }
