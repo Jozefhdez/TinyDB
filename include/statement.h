@@ -30,7 +30,7 @@ typedef struct {
 
 PrepareResult prepare_statement(InputBuffer *input_buffer,
                                 Statement *statement);
-ExecuteResult execute_statement(Statement *statement, Table *table);
 PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement);
+ExecuteResult execute_statement(Statement *statement, Table *table);
 
 #endif

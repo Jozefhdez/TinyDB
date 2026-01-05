@@ -4,6 +4,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+static ExecuteResult execute_insert(Statement *statement, Table *table);
+static ExecuteResult execute_select(Statement *statement, Table *table);
+
+PrepareResult prepare_statement(InputBuffer *input_buffer,
+                                Statement *statement) {
+    if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
+        return prepare_insert(input_buffer, statement);
+    }
+    if (strcmp(input_buffer->buffer, "select") == 0) {
+        statement->type = STATEMENT_SELECT;
+        return PREPARE_SUCCESS;
+    }
+    return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
 PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement) {
     statement->type = STATEMENT_INSERT;
 
@@ -36,16 +51,15 @@ PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement) {
     return PREPARE_SUCCESS;
 }
 
-PrepareResult prepare_statement(InputBuffer *input_buffer,
-                                Statement *statement) {
-    if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
-        return prepare_insert(input_buffer, statement);
+ExecuteResult execute_statement(Statement *statement, Table *table) {
+    switch (statement->type) {
+    case (STATEMENT_INSERT):
+        return execute_insert(statement, table);
+    case (STATEMENT_SELECT):
+        return execute_select(statement, table);
+    default:
+        return EXECUTE_FAILURE;
     }
-    if (strcmp(input_buffer->buffer, "select") == 0) {
-        statement->type = STATEMENT_SELECT;
-        return PREPARE_SUCCESS;
-    }
-    return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
 static ExecuteResult execute_insert(Statement *statement, Table *table) {
@@ -85,15 +99,4 @@ execute_select(__attribute__((unused)) Statement *statement, Table *table) {
 
     free(cursor);
     return EXECUTE_SUCCESS;
-}
-
-ExecuteResult execute_statement(Statement *statement, Table *table) {
-    switch (statement->type) {
-    case (STATEMENT_INSERT):
-        return execute_insert(statement, table);
-    case (STATEMENT_SELECT):
-        return execute_select(statement, table);
-    default:
-        return EXECUTE_FAILURE;
-    }
 }

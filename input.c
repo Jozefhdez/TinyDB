@@ -9,32 +9,6 @@
 #include <string.h>
 #include <unistd.h>
 
-InputBuffer *new_input_buffer() {
-    InputBuffer *input_buffer = (InputBuffer *)malloc(sizeof(InputBuffer));
-    input_buffer->buffer = NULL;
-    input_buffer->buffer_length = 0;
-    input_buffer->input_length = 0;
-    return input_buffer;
-}
-
-void read_input(InputBuffer *input_buffer) {
-    size_t bytes_read =
-        getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
-
-    if (bytes_read <= 0) {
-        printf("Error reading input\n");
-        exit(EXIT_FAILURE);
-    }
-
-    input_buffer->input_length = bytes_read - 1;
-    input_buffer->buffer[bytes_read - 1] = 0;
-}
-
-void close_input_buffer(InputBuffer *input_buffer) {
-    free(input_buffer->buffer);
-    free(input_buffer);
-}
-
 void table_information(Table *table) {
     uint32_t total_pages =
         (table->num_rows + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
@@ -64,6 +38,42 @@ void print_constants() {
     printf("LEAF_NODE_MAX_CELLS: %d\n", LEAF_NODE_MAX_CELLS);
 }
 
+void print_help_command() {
+    printf("Commands:\n");
+    printf("  .tables    - Show basic table information\n");
+    printf("  .schema    - Show table schema\n");
+    printf("  .constants - Show btree constants\n");
+    printf("  .btree     - printins the structure of btree\n");
+    printf("  .exit      - Exit the program\n");
+    printf("  .help      - Show this help message lmao\n");
+}
+
+InputBuffer *new_input_buffer() {
+    InputBuffer *input_buffer = (InputBuffer *)malloc(sizeof(InputBuffer));
+    input_buffer->buffer = NULL;
+    input_buffer->buffer_length = 0;
+    input_buffer->input_length = 0;
+    return input_buffer;
+}
+
+void read_input(InputBuffer *input_buffer) {
+    size_t bytes_read =
+        getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
+
+    if (bytes_read <= 0) {
+        printf("Error reading input\n");
+        exit(EXIT_FAILURE);
+    }
+
+    input_buffer->input_length = bytes_read - 1;
+    input_buffer->buffer[bytes_read - 1] = 0;
+}
+
+void close_input_buffer(InputBuffer *input_buffer) {
+    free(input_buffer->buffer);
+    free(input_buffer);
+}
+
 MetaCommandType get_meta_command_type(const char *buffer) {
     if (strcmp(buffer, ".exit") == 0)
         return COMMAND_EXIT;
@@ -91,7 +101,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
         return META_COMMAND_SUCCESS;
     case COMMAND_SCHEMA:
         table_schema(table);
-        return META_COMMAND_SCHEMA;
+        return META_COMMAND_SUCCESS;
     case COMMAND_CONSTANTS:
         printf("Constants:\n");
         print_constants();
@@ -101,13 +111,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
         print_leaf_node(get_page(table->pager, 0));
         return META_COMMAND_SUCCESS;
     case COMMAND_HELP:
-        printf("Commands:\n");
-        printf("  .tables    - Show basic table information\n");
-        printf("  .schema    - Show table schema\n");
-        printf("  .constants - Show btree constants\n");
-        printf("  .btree     - printins the structure of btree\n");
-        printf("  .exit      - Exit the program\n");
-        printf("  .help      - Show this help message lmao\n");
+        print_help_command();
         return META_COMMAND_SUCCESS;
     case COMMAND_UNKNOWN:
     default:

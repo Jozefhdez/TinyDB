@@ -31,8 +31,6 @@ int main(int argc, char *argv[]) {
             switch (do_meta_command(input_buffer, table)) {
             case META_COMMAND_SUCCESS:
                 continue;
-            case META_COMMAND_SCHEMA:
-                continue;
             case META_COMMAND_UNRECOGNIZED_COMMAND:
                 printf("Unrecognized command '%s'\n", input_buffer->buffer);
                 continue;
@@ -71,6 +69,7 @@ int main(int argc, char *argv[]) {
         case EXECUTE_FAILURE:
             printf("Error: execute_statement function defaulted to "
                    "EXECUTE_FAILURE\n");
+            break;
         }
     }
 }
