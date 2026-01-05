@@ -81,15 +81,20 @@ Data is automatically saved to the file when you exit.
   - Binary search for key lookups
   - Node type management (leaf/internal)
   
-- **Table Module** (`table.c/h`): High-level table and cursor operations
-  - Table and cursor management
-  - Root page initialization
-  - Cursor navigation and advancement
-
-- **Pager** (`table.c`): Page-based storage engine
+- **Pager Module** (`pager.c/h`): Page-based storage engine
   - 4KB page caching with lazy loading
-  - File I/O operations
-  - Dirty page tracking
+  - File I/O operations (open, read, write, flush)
+  - Up to 100 pages cached in memory
+  
+- **Cursor Module** (`cursor.c/h`): Row navigation and iteration
+  - Cursor positioning within B-tree nodes
+  - Cursor advancement through cells
+  - Value access at cursor position
+
+- **Table Module** (`table.c/h`): High-level database operations
+  - Database open/close operations
+  - Root page management
+  - Key search and lookup (delegates to B-tree)
 
 - **Statement Parser** (`statement.c/h`): SQL command parsing and execution
   - INSERT and SELECT statement preparation
@@ -143,36 +148,6 @@ The project includes a comprehensive test suite using pytest. Build the binary f
 ```sh
 pytest tests/test_cli.py -v
 ```
-
-**Test Coverage:**
-- Insert and select operations
-- Table full error handling (max 1300 rows with current setup)
-- String length validation (max username/email lengths)
-- Duplicate key detection
-- Negative ID validation
-- B-tree structure visualization
-- Meta-command functionality
-
-## Current Limitations
-
-- **Single-table database**: No support for multiple tables
-- **No DELETE or UPDATE**: Only INSERT and SELECT are implemented
-- **No indexing beyond primary key**: ID is the only searchable field
-- **No transaction support**: All operations are auto-committed
-- **Leaf nodes only**: Internal nodes not yet implemented (limits to ~13 rows per table currently)
-- **No SQL parser**: Commands are hard-coded, not parsed from SQL syntax
-- **Fixed schema**: Table structure is predefined
-
-## Future Enhancements
-
-- [ ] Implement B-tree node splitting for unlimited rows
-- [ ] Add internal nodes for multi-level B-tree
-- [ ] Implement DELETE and UPDATE statements
-- [ ] Add WHERE clause support for SELECT
-- [ ] Multiple table support
-- [ ] Secondary indexes
-- [ ] Transaction support with rollback
-- [ ] Full SQL parser
 
 ## Learning Resources
 
