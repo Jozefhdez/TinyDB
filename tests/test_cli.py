@@ -108,10 +108,10 @@ def test_prints_one_node_btree():
         "TinyDB > Executed.",
         "TinyDB > Executed.",
         "TinyDB > Tree:",
-        "leaf (size 3)",
-        "  - 0 : 1",
-        "  - 1 : 2",
-        "  - 2 : 3",
+        "- leaf (size 3)",
+        "  - 1",
+        "  - 2",
+        "  - 3",
         "TinyDB > "
     ]
     
@@ -135,3 +135,39 @@ def test_prints_error_message_for_duplicate_id():
     ]
     
     assert result == expected
+
+def test_allows_printing_out_structure_of_3_leaf_node_btree():
+    commands = [f"insert {i} user{i} person{i}@example.com" for i in range(1, 15)]
+    commands.append(".btree")
+    commands.append("insert 15 user15 person15@example.com")
+    commands.append(".exit")
+    
+    result = run_script(commands)
+    
+    # The btree output starts after the inserts (14 "Executed." messages + 14 "TinyDB > " prompts)
+    btree_output = result[14:]
+    
+    expected = [
+        "TinyDB > Tree:",
+        "- internal (size 1)",
+        "  - leaf (size 7)",
+        "    - 1",
+        "    - 2",
+        "    - 3",
+        "    - 4",
+        "    - 5",
+        "    - 6",
+        "    - 7",
+        "  - key 7",
+        "  - leaf (size 7)",
+        "    - 8",
+        "    - 9",
+        "    - 10",
+        "    - 11",
+        "    - 12",
+        "    - 13",
+        "    - 14",
+        "TinyDB > Need to implement searching an internal node",
+    ]
+    
+    assert btree_output == expected

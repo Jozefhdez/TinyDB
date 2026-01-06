@@ -108,7 +108,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
         return META_COMMAND_SUCCESS;
     case COMMAND_BTREE:
         printf("Tree:\n");
-        print_leaf_node(get_page(table->pager, 0));
+        print_tree(table->pager, 0, 0);
         return META_COMMAND_SUCCESS;
     case COMMAND_HELP:
         print_help_command();
