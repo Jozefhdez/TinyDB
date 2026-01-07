@@ -135,7 +135,7 @@ void create_new_root(Table *table, uint32_t right_child_page_num) {
         New root node points to two children.
     */
     void *root = get_page(table->pager, table->root_page_num);
-    void *right_child = get_page(table->pager, right_child_page_num);
+    // void *right_child = get_page(table->pager, right_child_page_num);
     uint32_t left_child_page_num = get_unused_page_num(table->pager);
     void *left_child = get_page(table->pager, left_child_page_num);
 
@@ -159,6 +159,8 @@ uint32_t get_node_max_key(void *node) {
         return *internal_node_key(node, *internal_node_num_keys(node) - 1);
     case NODE_LEAF:
         return *leaf_node_key(node, *leaf_node_num_cells(node) - 1);
+    default:
+        return 0;
     }
 }
 
@@ -193,6 +195,7 @@ void set_node_root(void *node, bool is_root) {
     *((uint8_t *)(node + IS_ROOT_OFFSET)) = value;
 }
 void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
+    (void)key; // unused
     /*
         Create a new node and move half the cells over.
         Insert the new value in one of the two nodes.
@@ -210,7 +213,7 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
     */
     for (int32_t i = LEAF_NODE_MAX_CELLS; i >= 0; i--) {
         void *destination_node;
-        if (i >= LEAF_NODE_LEFT_SPLIT_COUNT) {
+        if (i >= (int32_t)LEAF_NODE_LEFT_SPLIT_COUNT) {
             destination_node = new_node;
         } else {
             destination_node = old_node;
@@ -218,9 +221,9 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
         uint32_t index_within_node = i % LEAF_NODE_LEFT_SPLIT_COUNT;
         void *destination = leaf_node_cell(destination_node, index_within_node);
 
-        if (i == cursor->cell_num) {
+        if (i == (int32_t)cursor->cell_num) {
             serialize_row(value, destination);
-        } else if (i > cursor->cell_num) {
+        } else if (i > (int32_t)cursor->cell_num) {
             memcpy(destination, leaf_node_cell(old_node, i - 1),
                    LEAF_NODE_CELL_SIZE);
         } else {
