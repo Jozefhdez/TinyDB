@@ -4,9 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static ExecuteResult execute_insert(Statement *statement, Table *table);
-static ExecuteResult execute_select(Statement *statement, Table *table);
-
 PrepareResult prepare_statement(InputBuffer *input_buffer,
                                 Statement *statement) {
     if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
@@ -51,17 +48,6 @@ PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement) {
     return PREPARE_SUCCESS;
 }
 
-ExecuteResult execute_statement(Statement *statement, Table *table) {
-    switch (statement->type) {
-    case (STATEMENT_INSERT):
-        return execute_insert(statement, table);
-    case (STATEMENT_SELECT):
-        return execute_select(statement, table);
-    default:
-        return EXECUTE_FAILURE;
-    }
-}
-
 static ExecuteResult execute_insert(Statement *statement, Table *table) {
     void *node = get_page(table->pager, table->root_page_num);
     uint32_t num_cells = (*leaf_node_num_cells(node));
@@ -97,4 +83,15 @@ execute_select(__attribute__((unused)) Statement *statement, Table *table) {
 
     free(cursor);
     return EXECUTE_SUCCESS;
+}
+
+ExecuteResult execute_statement(Statement *statement, Table *table) {
+    switch (statement->type) {
+    case (STATEMENT_INSERT):
+        return execute_insert(statement, table);
+    case (STATEMENT_SELECT):
+        return execute_select(statement, table);
+    default:
+        return EXECUTE_FAILURE;
+    }
 }
