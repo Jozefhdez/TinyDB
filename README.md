@@ -2,9 +2,6 @@
 
 TinyDB is a small, SQLite-inspired database implemented from scratch in C, featuring a B-tree storage engine.
 
-**Status:**
-This project is under active development. Core features are functional, with ongoing improvements to the B-tree implementation.
-
 ## Purpose
 - Educational project to learn and demonstrate how database internals work
 - Implements core database concepts: B-tree indexing, page-based storage, and REPL interface
@@ -13,12 +10,16 @@ This project is under active development. Core features are functional, with ong
 ## Features
 - **SQL-like Commands**: `insert` and `select` statements
 - **Meta-commands**: `.exit`, `.btree`, `.constants`, `.schema`, `.tables`, `.help`
-- **B-tree Storage**: Leaf nodes with binary search for efficient key lookups
+- **Complete B-tree Storage**: Multi-level B-tree with internal node splitting
+  - Leaf nodes with binary search for efficient key lookups
+  - Internal nodes for hierarchical indexing
+  - Automatic node splitting and rebalancing
+  - Support for large datasets (tested with 100+ records)
 - **Duplicate Key Detection**: Prevents inserting rows with duplicate IDs
 - **Persistent Storage**: Data saved to disk with automatic page-based caching
 - **Schema Validation**: String length limits (username: 32 chars, email: 255 chars) and positive integer IDs
 - **Page-based Architecture**: 4KB pages with lazy loading for memory efficiency
-- **Root Page Management**: Automatic initialization of B-tree root node
+- **Root Page Management**: Automatic root node creation and splitting
 
 ## Build
 You need a C compiler (e.g., gcc or clang). From this folder, run:
@@ -76,10 +77,12 @@ Data is automatically saved to the file when you exit.
 
 ### Core Components
 
-- **B-tree Module** (`btree.c/h`): B-tree operations including node management, search, and insertion
-  - Leaf node format with header and cells
-  - Binary search for key lookups
-  - Node type management (leaf/internal)
+- **B-tree Module** (`btree.c/h`): Complete B-tree implementation with multi-level support
+  - Leaf and internal node management
+  - Automatic node splitting (both leaf and internal nodes)
+  - Binary search for efficient key lookups
+  - Parent-child pointer maintenance
+  - Tree balancing and rebalancing
   
 - **Pager Module** (`pager.c/h`): Page-based storage engine
   - 4KB page caching with lazy loading
@@ -112,6 +115,24 @@ Data is automatically saved to the file when you exit.
 
 ### Storage Layout
 
+**Internal Node Structure:**
+```
++------------------+
+| Node Type (1)    |  Common Node Header (6 bytes)
+| Is Root (1)      |
+| Parent Ptr (4)   |
++------------------+
+| Num Keys (4)     |  Internal Node Header (8 bytes)
+| Right Child (4)  |
++------------------+
+| Child Ptr 0 (4)  |  Cells (8 bytes each)
+| Key 0 (4)        |
+| Child Ptr 1 (4)  |
+| Key 1 (4)        |
+| ...              |
++------------------+
+```
+
 **Leaf Node Structure:**
 ```
 +------------------+
@@ -119,7 +140,8 @@ Data is automatically saved to the file when you exit.
 | Is Root (1)      |
 | Parent Ptr (4)   |
 +------------------+
-| Num Cells (4)    |  Leaf Node Header (4 bytes)
+| Num Cells (4)    |  Leaf Node Header (8 bytes)
+| Next Leaf (4)    |
 +------------------+
 | Cell 0           |  Cells (297 bytes each)
 |  - Key (4)       |  Maximum 13 cells per leaf node
@@ -131,9 +153,12 @@ Data is automatically saved to the file when you exit.
 
 **Page Layout:**
 - Page Size: 4096 bytes (4KB)
-- Leaf Node Header: 10 bytes
-- Cell Size: 297 bytes (4-byte key + 293-byte row)
+- Leaf Node Header: 14 bytes
+- Internal Node Header: 14 bytes
+- Cell Size (Leaf): 297 bytes (4-byte key + 293-byte row)
+- Cell Size (Internal): 8 bytes (4-byte child pointer + 4-byte key)
 - Max Cells per Leaf: 13 rows
+- Max Cells per Internal: 3 keys (hardcoded value hehe)
 
 **Row Format:**
 - ID: 4 bytes (uint32_t)
@@ -146,7 +171,8 @@ Data is automatically saved to the file when you exit.
 The project includes a comprehensive test suite using pytest. Build the binary first, then run:
 
 ```sh
-pytest tests/test_cli.py -v
+cd tests
+pytest test_cli.py -v
 ```
 
 ## Learning Resources
