@@ -100,7 +100,7 @@ MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table) {
         table_information(table);
         return META_COMMAND_SUCCESS;
     case COMMAND_SCHEMA:
-        table_schema(table);
+        table_schema();
         return META_COMMAND_SUCCESS;
     case COMMAND_CONSTANTS:
         printf("Constants:\n");

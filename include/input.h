@@ -31,7 +31,7 @@ void close_input_buffer(InputBuffer *input_buffer);
 MetaCommandType get_meta_command_type(const char *buffer);
 MetaCommandResult do_meta_command(InputBuffer *input_buffer, Table *table);
 void table_information(Table *table);
-void table_schema();
+void table_schema(void);
 void print_constants();
 
 #endif

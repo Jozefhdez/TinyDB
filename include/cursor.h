@@ -5,10 +5,10 @@
 #include <stdint.h>
 
 // forward declaration to avoid circular dependency
-typedef struct Table Table;
+struct Table;
 
 typedef struct {
-    Table *table;
+    struct Table *table;
     uint32_t page_num;
     uint32_t cell_num;
     bool end_of_table; // indicates a position one past the last element
@@ -16,6 +16,6 @@ typedef struct {
 
 void *cursor_value(Cursor *cursor);
 void cursor_advance(Cursor *cursor);
-Cursor *table_start(Table *table);
+Cursor *table_start(struct Table *table);
 
 #endif

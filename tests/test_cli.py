@@ -167,7 +167,8 @@ def test_allows_printing_out_structure_of_3_leaf_node_btree():
         "    - 12",
         "    - 13",
         "    - 14",
-        "TinyDB > Need to implement searching an internal node",
+        "TinyDB > Executed.",
+        "TinyDB > ",
     ]
     
     assert btree_output == expected
