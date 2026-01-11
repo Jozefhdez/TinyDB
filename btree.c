@@ -20,8 +20,12 @@ const uint8_t COMMON_NODE_HEADER_SIZE =
 */
 const uint32_t LEAF_NODE_NUM_CELLS_SIZE = sizeof(uint32_t); // 4 bytes
 const uint32_t LEAF_NODE_NUM_CELLS_OFFSET = COMMON_NODE_HEADER_SIZE;
-const uint32_t LEAF_NODE_HEADER_SIZE =
-    COMMON_NODE_HEADER_SIZE + LEAF_NODE_NUM_CELLS_SIZE; // 10 bytes
+const uint32_t LEAF_NODE_NEXT_LEAF_SIZE = sizeof(uint32_t);
+const uint32_t LEAF_NODE_NEXT_LEAF_OFFSET =
+    LEAF_NODE_NUM_CELLS_OFFSET + LEAF_NODE_NUM_CELLS_SIZE;
+const uint32_t LEAF_NODE_HEADER_SIZE = COMMON_NODE_HEADER_SIZE +
+                                       LEAF_NODE_NUM_CELLS_SIZE +
+                                       LEAF_NODE_NEXT_LEAF_SIZE;
 
 /*
     Leaf Node Body Layout
@@ -88,6 +92,7 @@ void initialize_leaf_node(void *node) {
     set_node_type(node, NODE_LEAF);
     set_node_root(node, false);
     *leaf_node_num_cells(node) = 0; // set to num_cell to 0
+    *leaf_node_next_leaf(node) = 0; // set next leaf to 0
 }
 
 void initialize_internal_node(void *node) {
@@ -195,7 +200,6 @@ void set_node_root(void *node, bool is_root) {
     *((uint8_t *)(node + IS_ROOT_OFFSET)) = value;
 }
 void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
-    (void)key; // unused
     /*
         Create a new node and move half the cells over.
         Insert the new value in one of the two nodes.
@@ -206,6 +210,8 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
     uint32_t new_page_num = get_unused_page_num(cursor->table->pager);
     void *new_node = get_page(cursor->table->pager, new_page_num);
     initialize_leaf_node(new_node);
+    *leaf_node_next_leaf(new_node) = *leaf_node_next_leaf(old_node);
+    *leaf_node_next_leaf(old_node) = new_page_num;
     /*
         All existing keys plus new key should be divided
         evenly between old (left) and new (right) nodes.
@@ -222,7 +228,9 @@ void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
         void *destination = leaf_node_cell(destination_node, index_within_node);
 
         if (i == (int32_t)cursor->cell_num) {
-            serialize_row(value, destination);
+            serialize_row(value,
+                          leaf_node_value(destination_node, index_within_node));
+            *leaf_node_key(destination_node, index_within_node) = key;
         } else if (i > (int32_t)cursor->cell_num) {
             memcpy(destination, leaf_node_cell(old_node, i - 1),
                    LEAF_NODE_CELL_SIZE);
@@ -345,5 +353,12 @@ Cursor *internal_node_find(Table *table, uint32_t page_num, uint32_t key) {
         return leaf_node_find(table, child_num, key);
     case NODE_INTERNAL:
         return internal_node_find(table, child_num, key);
+    default:
+        printf("This sould not happen mate");
+        exit(EXIT_FAILURE);
     }
+}
+
+uint32_t *leaf_node_next_leaf(void *node) {
+    return node + LEAF_NODE_NEXT_LEAF_OFFSET;
 }
