@@ -18,14 +18,20 @@ typedef enum {
     EXECUTE_SUCCESS,
     EXECUTE_TABLE_FULL,
     EXECUTE_DUPLICATE_KEY,
+    EXECUTE_NOT_FOUND,
     EXECUTE_FAILURE
 } ExecuteResult;
 
-typedef enum { STATEMENT_INSERT, STATEMENT_SELECT } StatementType;
+typedef enum {
+    STATEMENT_INSERT,
+    STATEMENT_SELECT,
+    STATEMENT_SELECT_WHERE
+} StatementType;
 
 typedef struct {
     StatementType type;
     Row row_to_insert;
+    uint32_t key;
 } Statement;
 
 PrepareResult prepare_statement(InputBuffer *input_buffer,

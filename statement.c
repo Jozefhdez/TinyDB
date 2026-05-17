@@ -13,6 +13,11 @@ PrepareResult prepare_statement(InputBuffer *input_buffer,
         statement->type = STATEMENT_SELECT;
         return PREPARE_SUCCESS;
     }
+    if (strncmp(input_buffer->buffer, "select where", 12) == 0) {
+        statement->type = STATEMENT_SELECT_WHERE;
+        sscanf(input_buffer->buffer, "select where id = %d", &statement->key);
+        return PREPARE_SUCCESS;
+    }
     return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
@@ -85,12 +90,28 @@ execute_select(__attribute__((unused)) Statement *statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
+static ExecuteResult execute_select_where(Statement *statement, Table *table) {
+    Cursor *cursor =
+        leaf_node_find(table, table->root_page_num, statement->key);
+    Row row;
+    deserialize_row(cursor_value(cursor), &row);
+    if (statement->key != row.id) {
+        free(cursor);
+        return EXECUTE_NOT_FOUND;
+    }
+    print_row(&row);
+    free(cursor);
+    return EXECUTE_SUCCESS;
+}
+
 ExecuteResult execute_statement(Statement *statement, Table *table) {
     switch (statement->type) {
     case (STATEMENT_INSERT):
         return execute_insert(statement, table);
     case (STATEMENT_SELECT):
         return execute_select(statement, table);
+    case (STATEMENT_SELECT_WHERE):
+        return execute_select_where(statement, table);
     default:
         return EXECUTE_FAILURE;
     }
