@@ -59,8 +59,7 @@ const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CELL_SIZE =
     INTERNAL_NODE_CHILD_SIZE + INTERNAL_NODE_KEY_SIZE;
-const uint32_t INTERNAL_NODE_MAX_CELLS =
-    3; // hardcoded just for testing purposes
+const uint32_t INTERNAL_NODE_MAX_CELLS = 510;
 
 #define INVALID_PAGE_NUM UINT32_MAX
 
