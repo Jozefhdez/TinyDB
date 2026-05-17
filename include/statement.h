@@ -26,6 +26,7 @@ typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
     STATEMENT_SELECT_WHERE,
+    STATEMENT_RANGE_SCAN,
     STATEMENT_UPDATE,
     STATEMENT_DELETE
 } StatementType;
@@ -34,6 +35,7 @@ typedef struct {
     StatementType type;
     Row row_to_insert;
     uint32_t key;
+    uint32_t key_end;
 } Statement;
 
 PrepareResult prepare_statement(InputBuffer *input_buffer,

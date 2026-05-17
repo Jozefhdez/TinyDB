@@ -13,6 +13,12 @@ PrepareResult prepare_statement(InputBuffer *input_buffer,
         statement->type = STATEMENT_SELECT;
         return PREPARE_SUCCESS;
     }
+    if (strncmp(input_buffer->buffer, "select where id >=", 18) == 0) {
+        statement->type = STATEMENT_RANGE_SCAN;
+        sscanf(input_buffer->buffer, "select where id >= %d and id <= %d",
+               &statement->key, &statement->key_end);
+        return PREPARE_SUCCESS;
+    }
     if (strncmp(input_buffer->buffer, "select where", 12) == 0) {
         statement->type = STATEMENT_SELECT_WHERE;
         sscanf(input_buffer->buffer, "select where id = %d", &statement->key);
@@ -160,6 +166,21 @@ static ExecuteResult execute_update(Statement *statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
+static ExecuteResult execute_range_scan(Statement *statement, Table *table) {
+    Cursor *cursor = table_find(table, statement->key);
+    Row row;
+    while (!cursor->end_of_table) {
+        deserialize_row(cursor_value(cursor), &row);
+        if (row.id > statement->key_end) {
+            break;
+        }
+        print_row(&row);
+        cursor_advance(cursor);
+    }
+    free(cursor);
+    return EXECUTE_SUCCESS;
+}
+
 static ExecuteResult execute_delete(Statement *statement, Table *table) {
     Cursor *cursor =
         leaf_node_find(table, table->root_page_num, statement->key);
@@ -185,6 +206,8 @@ ExecuteResult execute_statement(Statement *statement, Table *table) {
         return execute_select(statement, table);
     case (STATEMENT_SELECT_WHERE):
         return execute_select_where(statement, table);
+    case (STATEMENT_RANGE_SCAN):
+        return execute_range_scan(statement, table);
     case (STATEMENT_UPDATE):
         return execute_update(statement, table);
     case (STATEMENT_DELETE):
