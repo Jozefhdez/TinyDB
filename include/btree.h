@@ -1,6 +1,7 @@
 #ifndef BTREE_H
 #define BTREE_H
 
+#include "cursor.h"
 #include "row.h"
 #include "table.h"
 #include <stdint.h>
@@ -74,6 +75,7 @@ void update_internal_node_key(void *node, uint32_t old_key, uint32_t new_key);
 uint32_t get_node_max_key(Pager *pager, void *node);
 void create_new_root(Table *table, uint32_t right_child_page_num);
 void leaf_node_insert(Cursor *cursor, uint32_t key, Row *value);
+void leaf_node_delete(Cursor *cursor);
 bool is_node_root(void *node);
 void set_node_root(void *node, bool is_root);
 void leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value);

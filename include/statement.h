@@ -26,7 +26,8 @@ typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
     STATEMENT_SELECT_WHERE,
-    STATEMENT_UPDATE
+    STATEMENT_UPDATE,
+    STATEMENT_DELETE
 } StatementType;
 
 typedef struct {
