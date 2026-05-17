@@ -18,11 +18,46 @@ PrepareResult prepare_statement(InputBuffer *input_buffer,
         sscanf(input_buffer->buffer, "select where id = %d", &statement->key);
         return PREPARE_SUCCESS;
     }
+    if (strncmp(input_buffer->buffer, "update", 6) == 0) {
+        return prepare_update(input_buffer, statement);
+    }
     return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
 PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement) {
     statement->type = STATEMENT_INSERT;
+
+    char *keyword = strtok(input_buffer->buffer, " ");
+    (void)keyword; // stfu compiler
+    char *id_string = strtok(NULL, " ");
+    char *username = strtok(NULL, " ");
+    char *email = strtok(NULL, " ");
+
+    if (id_string == NULL || username == NULL || email == NULL) {
+        return PREPARE_SYNTAX_ERROR;
+    }
+
+    int id = atoi(id_string);
+    if (id < 0) {
+        return PREPARE_NEGATIVE_ID;
+    }
+
+    if (strlen(username) > COLUMN_USERNAME_SIZE) {
+        return PREPARE_STRING_TOO_LONG;
+    }
+
+    if (strlen(email) > COLUMN_EMAIL_SIZE) {
+        return PREPARE_STRING_TOO_LONG;
+    }
+
+    statement->row_to_insert.id = id;
+    strcpy(statement->row_to_insert.username, username);
+    strcpy(statement->row_to_insert.email, email);
+    return PREPARE_SUCCESS;
+}
+
+PrepareResult prepare_update(InputBuffer *input_buffer, Statement *statement) {
+    statement->type = STATEMENT_UPDATE;
 
     char *keyword = strtok(input_buffer->buffer, " ");
     (void)keyword; // stfu compiler
@@ -104,6 +139,22 @@ static ExecuteResult execute_select_where(Statement *statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
+static ExecuteResult execute_update(Statement *statement, Table *table) {
+    Cursor *cursor = leaf_node_find(table, table->root_page_num,
+                                    statement->row_to_insert.id);
+    Row row;
+    deserialize_row(cursor_value(cursor), &row);
+
+    if (statement->row_to_insert.id != row.id) {
+        free(cursor);
+        return EXECUTE_NOT_FOUND;
+    }
+
+    serialize_row(&statement->row_to_insert, cursor_value(cursor));
+    free(cursor);
+    return EXECUTE_SUCCESS;
+}
+
 ExecuteResult execute_statement(Statement *statement, Table *table) {
     switch (statement->type) {
     case (STATEMENT_INSERT):
@@ -112,6 +163,8 @@ ExecuteResult execute_statement(Statement *statement, Table *table) {
         return execute_select(statement, table);
     case (STATEMENT_SELECT_WHERE):
         return execute_select_where(statement, table);
+    case (STATEMENT_UPDATE):
+        return execute_update(statement, table);
     default:
         return EXECUTE_FAILURE;
     }

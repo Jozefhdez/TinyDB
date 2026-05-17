@@ -25,7 +25,8 @@ typedef enum {
 typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
-    STATEMENT_SELECT_WHERE
+    STATEMENT_SELECT_WHERE,
+    STATEMENT_UPDATE
 } StatementType;
 
 typedef struct {
@@ -37,6 +38,7 @@ typedef struct {
 PrepareResult prepare_statement(InputBuffer *input_buffer,
                                 Statement *statement);
 PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statement);
+PrepareResult prepare_update(InputBuffer *input_buffer, Statement *statement);
 ExecuteResult execute_statement(Statement *statement, Table *table);
 
 #endif

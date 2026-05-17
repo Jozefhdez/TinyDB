@@ -8,7 +8,7 @@ TinyDB is a small, SQLite-inspired database implemented from scratch in C, featu
 - Clean, readable codebase designed for study and experimentation
 
 ## Features
-- **SQL-like Commands**: `insert`, `select`, and `select where` statements
+- **SQL-like Commands**: `insert`, `select`, `select where`, and `update` statements
 - **Meta-commands**: `.exit`, `.btree`, `.constants`, `.schema`, `.tables`, `.help`
 - **Complete B-tree Storage**: Multi-level B-tree with internal node splitting
   - Leaf nodes with binary search for efficient key lookups
@@ -68,6 +68,7 @@ Data is automatically saved to the file when you exit.
 - `insert <id> <username> <email>` - Insert a new row
 - `select` - Display all rows
 - `select where id = <id>` - Fetch a single row by ID using B-tree binary search
+- `update <id> <username> <email>` - Update an existing row in place
 
 **Meta Commands:**
 - `.exit` - Save and exit the program
