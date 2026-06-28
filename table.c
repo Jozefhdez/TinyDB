@@ -16,6 +16,14 @@ Table *db_open(const char *filename) {
         void *root_node = get_page(pager, 0);
         initialize_leaf_node(root_node);
         set_node_root(root_node, true);
+        table->num_rows = 0;
+    } else {
+        void *root_node = get_page(pager, table->root_page_num);
+
+        // At this stage, the root page is always a leaf node, so the row count
+        // equals the number of cells in the root. This must be updated once
+        // internal nodes and leaf splitting are implemented.
+        table->num_rows = *leaf_node_num_cells(root_node);
     }
 
     return table;
